@@ -3,9 +3,9 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'SmartGarage 360 — Complete Garage Control',
+  description: 'The all-in-one garage management system built for Kenya’s auto repair industry.',
+  generator: 'SmartGarage 360',
   icons: {
     icon: [
       {
