@@ -779,8 +779,8 @@ function AddReminderModal({ demo, notify, onClose }: { demo: Demo; notify: (m: s
 }
 
 // ---- presentation layer -----------------------------------------------------
-function PresentationLayer({ demo, view, setView, onExit, notify }: {
-  demo: Demo; view: View; setView: (v: View) => void; onExit: () => void; notify: (m: string) => void
+function PresentationLayer({ demo, view, setView, onExit, notify, onFlagship }: {
+  demo: Demo; view: View; setView: (v: View) => void; onExit: () => void; notify: (m: string) => void; onFlagship: () => void
 }) {
   const [tourOpen, setTourOpen] = useState(false)
   const [tourStep, setTourStep] = useState(0)
@@ -798,7 +798,7 @@ function PresentationLayer({ demo, view, setView, onExit, notify }: {
     else notify(`Demo workflow: ${job.customer}\u2019s ${job.vehicle} → ${next}.`)
   }
   return <>
-    <div className="presentation-bar"><div className="presentation-status"><span className="live-dot" /> Presentation demo <small>Safe mock data · resets on exit</small></div><div className="presentation-actions"><button onClick={startTour}><Sparkles className="size-3.5" /> Start guided tour</button><button onClick={() => setView('job-cards')}>Show flagship job card</button><button onClick={() => setView('reports')}>Show reports</button><button onClick={advanceWorkflow}>Advance sample workflow</button><button onClick={() => { demo.reset(); notify('Demo data reset to the clean presentation state.') }}>Reset demo data</button><button className="presentation-exit" onClick={onExit}>Exit demo</button></div></div>
+    <div className="presentation-bar"><div className="presentation-status"><span className="live-dot" /> Presentation demo <small>Safe mock data · resets on exit</small></div><div className="presentation-actions"><button onClick={startTour}><Sparkles className="size-3.5" /> Start guided tour</button><button onClick={onFlagship}>Show flagship job card</button><button onClick={() => setView('reports')}>Show reports</button><button onClick={advanceWorkflow}>Advance sample workflow</button><button onClick={() => { demo.reset(); notify('Demo data reset to the clean presentation state.') }}>Reset demo data</button><button className="presentation-exit" onClick={onExit}>Exit demo</button></div></div>
     <div className="demo-state-chip"><span className="live-dot" /> Live demo state <b>{completedCount(demo.state)} completed jobs</b><b>{demo.state.invoices.filter(i => i.paid >= i.total).length} paid invoices</b><b>{remindersDue(demo.state)} reminders pending</b></div>
     {tourOpen && <div className="tour-backdrop"><div className="tour-card" role="dialog" aria-modal="true" aria-labelledby="tour-title"><div className="tour-progress">SHAREHOLDER WALKTHROUGH <span>{tourStep + 1} / {steps.length}</span></div><div className="tour-icon"><Sparkles className="size-5" /></div><h2 id="tour-title">{current.title}</h2><p>{current.copy}</p><div className="tour-dots">{steps.map((step, index) => <button aria-label={`Go to step ${index + 1}`} key={step.title} onClick={() => { setTourStep(index); setView(step.view) }} className={cn(index === tourStep && 'active')} />)}</div><div className="tour-footer"><button className="tour-skip" onClick={() => setTourOpen(false)}>Skip tour</button><div className="tour-nav">{tourStep > 0 && <button onClick={() => { const previous = tourStep - 1; setTourStep(previous); setView(steps[previous].view) }}>Back</button>}<button className="primary-button" onClick={next}>{tourStep === steps.length - 1 ? 'Open job card' : 'Next step'} <ArrowRight className="size-4" /></button></div></div></div></div>}
   </>
@@ -826,7 +826,7 @@ export default function Page() {
   return <>
     <AppShell demo={demo} view={view} setView={setView} role={role} onLogout={() => setScreen('landing')} openJob={openJob} activeJobId={activeJobId} setActiveJobId={setActiveJobId} openModal={setModalView} notify={notify} />
     {modalView && <AddModal view={modalView} demo={demo} notify={notify} onClose={() => setModalView(null)} />}
-    <PresentationLayer demo={demo} view={view} setView={setView} onExit={() => { demo.reset(); setView('dashboard'); setScreen('landing') }} notify={notify} />
+    <PresentationLayer demo={demo} view={view} setView={setView} onExit={() => { demo.reset(); setView('dashboard'); setScreen('landing') }} notify={notify} onFlagship={() => { setActiveJobId(demo.state.jobs[0].id); setView('job-cards') }} />
     {notice && <div className="demo-notice"><CheckCircle2 className="size-4" />{notice}</div>}
   </>
 }
