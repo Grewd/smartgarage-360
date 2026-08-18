@@ -17,3 +17,5 @@ node_modules
 # Next.js build artifacts
 next-env.d.ts
 *.tsbuildinfo
+# Playwright MCP artifacts
+.playwright-mcp/
